@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- stylesheet -->
+    <title>Webブックマークの一覧</title>
+    <link rel="stylesheet" th:href="@{style.css}" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Webブックマーク</h1>
+      <button class="add-btn" id="addBookmarkBtn">+</button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="addBookmarkModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>新しいブックマーク</h3>
+        </div>
+        <form method="POST" action="/link/create">
+          <div class="form-group">
+            <label for="websiteName">Website名</label>
+            <input 
+			name="name" 
+			type="text" 
+			id="websiteName" 
+			placeholder="Website名" />
+          </div>
+          <div class="form-group">
+            <label for="websiteLink">リンク</label>
+            <input
+			  name="url"
+              type="text"
+              id="websiteLink"
+              placeholder="https://example.com"
+            />
+          </div>
+          <div class="form-group">
+            <label for="websiteTag">タッグ</label>
+			<!--TODO : UPDATE TAG??-->
+            <select name="tag_id" id="websiteTag">
+              <option value=1>Search Engine</option>
+              <option value=2>Social Media</option>
+              <option value=3>News</option>
+              <option value=4>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="websiteDescription">詳細</label>
+            <input name="description" type="text" id="websiteDescription" placeholder="詳細説明" />
+          </div>
+          <button class="submit" id="submitBookmark">確定</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <table id="bookmarksTable">
+      <thead>
+        <tr>
+          <th>Website名</th>
+          <th>リンク</th>
+          <th>
+            <span>タッグ</span>
+            <button class="add-btn" id="addTagBtn">+</button>
+            <!-- Modal -->
+            <div class="modal" id="addTagModal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3>新しいブックマーク</h3>
+                </div>
+                <form>
+                  <div class="form-group">
+                    <label for="tagName">タッグ名</label>
+                    <input type="text" id="tagName" placeholder="タッグ名" />
+                  </div>
+                  <button class="submit" id="submitTag">確定</button>
+                </form>
+              </div>
+            </div>
+          </th>
+          <th>詳細</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="object : ${object_list}">
+          <td th:text="${object.name}">グーグル</td>
+          <td>
+            <a href="https://www.google.com" th:text="${object.url}" target="_blank">www.google.com</a>
+          </td>
+          <td th:text="${object.tag.name}">Search Engine</td>
+          <td th:text="${object.description}">標準的に使われるサーチエンジンサイト</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- script -->
+    <script th:src="@{script.js}"></script>
+  </body>
+</html>
