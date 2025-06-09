@@ -16,7 +16,7 @@ public class Tag {
 
 	@Id
 	@Column
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Schema(description = "Name of the Tag", example = "Spring")
