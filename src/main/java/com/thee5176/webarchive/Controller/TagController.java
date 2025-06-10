@@ -8,16 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.thee5176.webarchive.Repository.TagRepository;
+import com.thee5176.webarchive.Service.TagService;
+import com.thee5176.webarchive.dto.TagDTO;
 import com.thee5176.webarchive.model.Tag;
-
-import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @Controller
@@ -25,29 +27,35 @@ public class TagController {
 	@Autowired
 	TagRepository tagRepository;
 	
-	@Operation(summary="Get all tags from schema")
-	@GetMapping("/tags")
-	public List<Tag> getTags() {
-		return tagRepository.findAll();
+	@Autowired
+	TagService tagService;
+	
+	@GetMapping("/tag")
+	public ModelAndView getTagListView(ModelAndView mav) {
+		mav.setViewName("tag/main");
+		List<Tag> tagList = tagRepository.findAll();
+		mav.addObject("title", "Tag List");
+		mav.addObject("object_list", tagList);
+		return mav;
 	}
 	
-	@GetMapping("/tags/name/{name}")
+	@GetMapping("/tag/name/{name}")
 	public Tag getListByName(@PathVariable String name) {
 		return tagRepository.findByName(name)
 				.orElseThrow(() -> new RuntimeException("Tag not found"));
 	}
 	
-	@PostMapping("/tags/create")
-	public ResponseEntity<String> createTag(@RequestBody Tag tag) {
-		if ( !tagRepository.existsByIdOrName(tag.getId(), tag.getName()) ) {
-			tagRepository.save(tag);
+	@PostMapping("/tag/create")
+	public ResponseEntity<String> createTag(@ModelAttribute TagDTO tag) {
+		try {
+			tagService.createTag(tag);
 			return new ResponseEntity<String>("New Tag created succesfully", HttpStatus.CREATED);
-		} else {
-			return new ResponseEntity<String>("Error Tag already exist", HttpStatus.CONFLICT);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		}
 	}
 	
-	@PutMapping("/tags/update/{id}")
+	@PutMapping("/tag/update/{id}")
 	public ResponseEntity<?> updateTag(@RequestBody Tag tag, @PathVariable long id) {
 		if ( tagRepository.existsById(id) ) {
 			tag.setId(id);
@@ -58,7 +66,7 @@ public class TagController {
 		}
 	}
 	
-	@DeleteMapping("/tags/delete/{id}")
+	@DeleteMapping("/tag/delete/{id}")
 	public ResponseEntity<?> deleteTag(@PathVariable long id) {
 		if ( tagRepository.existsById(id) ) {
 			tagRepository.deleteById(id);

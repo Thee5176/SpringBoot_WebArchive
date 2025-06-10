@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.thee5176.webarchive.Repository.LinkRepository;
 import com.thee5176.webarchive.Repository.TagRepository;
 import com.thee5176.webarchive.Service.LinkService;
+import com.thee5176.webarchive.dto.LinkDTO;
 import com.thee5176.webarchive.model.Link;
 import com.thee5176.webarchive.model.Tag;
 
@@ -37,15 +38,24 @@ public class LinkController {
 	LinkService linkService;
 
 	@GetMapping("/bookmark")
-	@Operation(summary = "Get all bookmark link from schema", description = "Returns all bookmark links stored in the database.")
 	public ModelAndView getBookmarksListView(ModelAndView mav) {
-		mav.setViewName("main");
+		mav.setViewName("bookmark/main");
 		List<Link> bookmarkList = linkRepository.findAll();
+		mav.addObject("title", "Bookmark List");
 		mav.addObject("object_list", bookmarkList);
 		return mav;
 	}
 
-	@GetMapping("/bookmark/name/{name}")
+	@GetMapping("/bookmark/id/{id}")
+	public ModelAndView getDetailView(@PathVariable long id, ModelAndView mav) {
+		mav.setViewName("bookmark/detail_modal");
+		Link link = linkRepository.findById(id)
+				.orElseThrow();
+		mav.addObject("object", link);
+		return mav;
+	}
+	
+	@GetMapping("/bookmark/api/name/{name}")
 	@Operation(summary = "Get bookmark with name", description = "Returns a product as per the name")
 	public ModelAndView getBookmark(@PathVariable String name, ModelAndView mav) {
 		Link bookmark = linkRepository.findByName(name)
@@ -54,7 +64,7 @@ public class LinkController {
 		return mav;
 	}
 
-	@GetMapping("/bookmark/id/{id}")
+	@GetMapping("/bookmark/api/id/{id}")
 	@Operation(summary = "Get bookmark with id", description = "Returns a product as per the id")
 	public ModelAndView getLinkById(@PathVariable long id, ModelAndView mav) {
 		Link bookmark = linkRepository.findById(id)
@@ -63,24 +73,18 @@ public class LinkController {
 		return mav;
 	}
 
-	@GetMapping("/create/{element}")
-	public ModelAndView getBookmarkCreateView(@PathVariable String element, ModelAndView mav) {
-		// if path is /bookmark/create
-		if (element.equals("bookmark")) {
-			mav.setViewName("bookmark_create_form");
-			List<Tag> objectList = tagRepository.findAll();
-			mav.addObject("object_list", objectList);
-			// if path is /tag/create
-		} else if (element.equals("tag")) {
-			mav.setViewName("tag_create_form");
-		} else {
-			return new ModelAndView("redirect:/error/404");
-		}
+	@GetMapping("/form/bookmark")
+	// dynamic tag selector
+	public ModelAndView getBookmarkForm(ModelAndView mav) {
+		mav.setViewName("bookmark/form");
+		List<Tag> objectList = tagRepository.findAll();
+		mav.addObject("object_list", objectList);
+
 		return mav;
 	}
 
 	@PostMapping("/bookmark/create")
-	public ResponseEntity<String> createBookmark(@ModelAttribute("bookmarkForm") Link link) {
+	public ResponseEntity<String> createBookmark(@ModelAttribute("bookmarkForm") LinkDTO link) {
 		try {
 			linkService.saveLinkWithTag(link);
 			return new ResponseEntity<String>("New Bookmark created successfully", HttpStatus.CREATED);
