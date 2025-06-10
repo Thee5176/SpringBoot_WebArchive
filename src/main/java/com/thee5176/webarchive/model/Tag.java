@@ -20,10 +20,10 @@ public class Tag {
 	private long id;
 
 	@Schema(description = "Name of the Tag", example = "Spring")
-	@Column(nullable = false, unique = true)
+	@Column(name = "name", nullable = false, unique = true)
 	private String name;
 
 	@Schema(description = "Description of the Tag", example = "Source about Spring Framework")
-	@Column(nullable = true)
+	@Column(name = "description", nullable = true, unique = false)
 	private String description;
 }

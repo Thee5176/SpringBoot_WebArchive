@@ -33,7 +33,8 @@ public class TagController {
 	
 	@GetMapping("/tags/name/{name}")
 	public Tag getListByName(@PathVariable String name) {
-		return tagRepository.findByName(name).orElseThrow(() -> new RuntimeException("Tag not found"));
+		return tagRepository.findByName(name)
+				.orElseThrow(() -> new RuntimeException("Tag not found"));
 	}
 	
 	@PostMapping("/tags/create")

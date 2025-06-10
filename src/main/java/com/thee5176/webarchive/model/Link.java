@@ -1,6 +1,5 @@
 package com.thee5176.webarchive.model;
 
-
 import java.util.Date;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,27 +26,27 @@ public class Link {
 	private long id;
 
 	@Schema(description = "Name of the link", example = "Bealdung")
-	@Column(nullable = false, unique = true)
+	@Column(name = "name", nullable = false, unique = true)
 	private String name;
 
 	@Schema(description = "URL of the link", example = "https://www.baeldung.com/intro-to-project-lombok")
-	@Column(nullable = false, unique = true)
+	@Column(name = "url", nullable = false, unique = true)
 	private String url;
 
 	@ManyToOne
-	@JoinColumn(name = "tag_id", nullable = true)
+	@JoinColumn(name = "tag_id", nullable = true, unique = false)
 	private Tag tag;
 
 	@Schema(description = "Description of the link", example = "Introduction to Project Lombok")
-	@Column(nullable = true)
+	@Column(name = "description", nullable = true, unique = false)
 	private String description;
-	
-	@Column(name="created_at" ,nullable= false)
+
+	@Column(name = "created_at", nullable = true, unique = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
-	
 
-	@Column(name="updated_at", nullable= false)
+	@Column(name = "updated_at", nullable = true, unique = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
+
 }
