@@ -1,7 +1,7 @@
 CREATE TABLE `links` (
   `created_at` datetime(6) DEFAULT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `tag_id` bigint DEFAULT NULL,
+  `tag_id` bigint NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
@@ -10,5 +10,5 @@ CREATE TABLE `links` (
   UNIQUE KEY (`name`),
   UNIQUE KEY (`url`),
   KEY (`tag_id`),
-  CONSTRAINT FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`)
+  CONSTRAINT FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

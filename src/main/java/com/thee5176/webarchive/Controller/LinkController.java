@@ -1,20 +1,20 @@
 package com.thee5176.webarchive.Controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thee5176.webarchive.Repository.LinkRepository;
 import com.thee5176.webarchive.Repository.TagRepository;
@@ -26,7 +26,6 @@ import com.thee5176.webarchive.model.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@Controller
 public class LinkController {
 	@Autowired
 	LinkRepository linkRepository;
@@ -54,24 +53,7 @@ public class LinkController {
 		mav.addObject("object", link);
 		return mav;
 	}
-	
-	@GetMapping("/bookmark/api/name/{name}")
-	@Operation(summary = "Get bookmark with name", description = "Returns a product as per the name")
-	public ModelAndView getBookmark(@PathVariable String name, ModelAndView mav) {
-		Link bookmark = linkRepository.findByName(name)
-				.orElseThrow(() -> new RuntimeException("Bookmark with name " + name + " not found"));
-		mav.addObject("object", bookmark);
-		return mav;
-	}
 
-	@GetMapping("/bookmark/api/id/{id}")
-	@Operation(summary = "Get bookmark with id", description = "Returns a product as per the id")
-	public ModelAndView getLinkById(@PathVariable long id, ModelAndView mav) {
-		Link bookmark = linkRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Bookmark with id " + id + " not found"));
-		mav.addObject("object", bookmark);
-		return mav;
-	}
 
 	@GetMapping("/form/bookmark")
 	// dynamic tag selector
@@ -84,37 +66,42 @@ public class LinkController {
 	}
 
 	@PostMapping("/bookmark/create")
-	public ResponseEntity<String> createBookmark(@ModelAttribute("bookmarkForm") LinkDTO link) {
+	public ModelAndView createBookmark(
+			@ModelAttribute("bookmarkForm") @Validated LinkDTO link, 
+			BindingResult result,
+			RedirectAttributes redirectAttributes) {
+		Map<String,String> alert = new HashMap<>();
 		try {
-			linkService.saveLinkWithTag(link);
-			return new ResponseEntity<String>("New Bookmark created successfully", HttpStatus.CREATED);
+			
+			linkService.createLinkWithTag(link);
+			
+			alert.put("bscolor", "success");
+			alert.put("message", "New Bookmark created successfully");
 		} catch (RuntimeException e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+			alert.put("bscolor", "danger");
+			alert.put("message", e.getMessage());
 		}
-	}
-
-	@PutMapping("bookmark/update/{id}")
-	@Operation(summary = "Update a product by id", description = "Returns a product as per the id")
-	public ResponseEntity<?> updateLink(@RequestBody Link link, @PathVariable long id) {
-		// 新しいのを古いの代わりに上書き：Update処理はRequestBodyからオブジェクトを受け取て、IDを設定して保存する
-		if (linkRepository.existsById(id)) {
-			link.setId(id);
-			linkRepository.save(link);
-			return ResponseEntity.ok().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		redirectAttributes.addFlashAttribute(alert);
+		return new ModelAndView("redirect:/bookmark");
 	}
 
 	@DeleteMapping("bookmark/delete/{id}")
 	@Operation(summary = "Delete a bookmark by id", description = "Delete a product as per the name")
-	public ResponseEntity<?> deleteLink(@PathVariable long id) {
+	public ModelAndView deleteLink(@PathVariable long id,
+			RedirectAttributes redirectAttributes) {
+		Map<String,String> alert = new HashMap<>();
 		if (linkRepository.existsById(id)) {
+			
 			linkRepository.deleteById(id);
-			return ResponseEntity.ok().build();
+			linkRepository.flush();
+			
+			alert.put("bscolor", "success");
+			alert.put("message", "Bookmark deleted successfully");
 		} else {
-			return ResponseEntity.notFound().build();
+			alert.put("bscolor", "danger");
+			alert.put("message", "Bookmark with id " + id + " not exist");
 		}
+		redirectAttributes.addFlashAttribute(alert);
+		return new ModelAndView("redirect:/bookmark");
 	}
-
 }

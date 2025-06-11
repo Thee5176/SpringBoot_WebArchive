@@ -1,20 +1,19 @@
 package com.thee5176.webarchive.Controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thee5176.webarchive.Repository.TagRepository;
 import com.thee5176.webarchive.Service.TagService;
@@ -39,40 +38,40 @@ public class TagController {
 		return mav;
 	}
 	
-	@GetMapping("/tag/name/{name}")
-	public Tag getListByName(@PathVariable String name) {
-		return tagRepository.findByName(name)
-				.orElseThrow(() -> new RuntimeException("Tag not found"));
-	}
-	
 	@PostMapping("/tag/create")
-	public ResponseEntity<String> createTag(@ModelAttribute TagDTO tag) {
+	public ModelAndView createTag(@ModelAttribute TagDTO tag,
+			RedirectAttributes redirectAttributes) {
+		Map<String,String> alert = new HashMap<>();
 		try {
+			
 			tagService.createTag(tag);
-			return new ResponseEntity<String>("New Tag created succesfully", HttpStatus.CREATED);
+			
+			alert.put("bscolor", "success");
+			alert.put("message", "New Bookmark created successfully");
 		} catch (Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+			alert.put("bscolor", "danger");
+			alert.put("message", e.getMessage());
 		}
-	}
-	
-	@PutMapping("/tag/update/{id}")
-	public ResponseEntity<?> updateTag(@RequestBody Tag tag, @PathVariable long id) {
-		if ( tagRepository.existsById(id) ) {
-			tag.setId(id);
-			tagRepository.save(tag);
-			return ResponseEntity.ok("OK");
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		redirectAttributes.addFlashAttribute(alert);
+		return new ModelAndView("redirect:/tag");
 	}
 	
 	@DeleteMapping("/tag/delete/{id}")
-	public ResponseEntity<?> deleteTag(@PathVariable long id) {
+	public ModelAndView deleteTag(@PathVariable long id,
+			RedirectAttributes redirectAttribute) {
+		Map<String,String> alert = new HashMap<>();
 		if ( tagRepository.existsById(id) ) {
+			
 			tagRepository.deleteById(id);
-			return ResponseEntity.ok().build();
+			tagRepository.flush();
+			
+			alert.put("bscolor", "success");
+			alert.put("message", "Bookmark deleted successfully");
 		} else {
-			return ResponseEntity.notFound().build();
+			alert.put("bscolor", "danger");
+			alert.put("message", "Bookmark with id " + id + " not exist");
 		}
+		redirectAttribute.addFlashAttribute(alert);
+		return new ModelAndView("redirect:/tag");
 	}
 }

@@ -17,7 +17,7 @@ public class TagService {
 	public Tag createTag(TagDTO dto) {
 		if ( !tagRepository.existsByName(dto.name()) ) {
 			Tag tag = TagDTOMapper.map(dto);
-			return tagRepository.save(tag);
+			return tagRepository.saveAndFlush(tag);
 		} else {
 			throw new RuntimeException("Tag already Exist");
 		}

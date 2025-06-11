@@ -7,6 +7,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -15,15 +18,20 @@ import lombok.Data;
 public class Tag {
 
 	@Id
+	@NotNull
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Schema(description = "Tag ID", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
 	private long id;
 
-	@Schema(description = "Name of the Tag", example = "Spring")
+	@NotEmpty(message = "タッグ名：入力してください！")
+	@Size(min=2, max=15, message="タッグ名：2-15文字を抑えてください！")
 	@Column(name = "name", nullable = false, unique = true)
+	@Schema(description = "Tag name", example = "Programming")
 	private String name;
 
-	@Schema(description = "Description of the Tag", example = "Source about Spring Framework")
+	@Size(min=2, max=50, message="詳細：2-50文字を抑えてください！")
 	@Column(name = "description", nullable = true, unique = false)
+	@Schema(description = "Tag description", example = "All about programming languages")
 	private String description;
 }

@@ -1,9 +1,10 @@
-INSERT INTO tags VALUES (1, "Java基礎知識","Java"),
-  (2, "Springフレームワークの基本","Spring Core"),
-  (3, "Configurationクラスなどの使用","中継層"),
-  (4, "Controllerクラス又はHelperクラスの使用","Application層"),
-  (5, "Serviceクラス又はDomainObjectクラスの使用、","Domain層"),
-  (6, "Repositoryクラス、Mapperクラス又はEntityクラスの使用、","Infrastructure層");
+INSERT INTO tags (id, name, description) VALUES
+  (1, "Java", "Java基礎知識"),
+  (2, "Spring Core", "Springフレームワークの基本"),
+  (3, "中継層", "Configurationクラスなどの使用"),
+  (4, "Application層", "Controllerクラス又はHelperクラスの使用"),
+  (5, "Domain層", "Serviceクラス又はDomainObjectクラスの使用"),
+  (6, "Infrastructure層", "Repositoryクラス、Mapperクラス又はEntityクラスの使用");
 
 -- Java basics (tag_id 1)
 INSERT INTO links (created_at, updated_at, description, name, url, tag_id) VALUES

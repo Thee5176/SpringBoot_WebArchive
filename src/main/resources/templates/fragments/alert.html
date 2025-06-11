@@ -1,0 +1,12 @@
+<!--Alert-->
+<div
+  th:if="${message}"
+  th:class="'alert alert-' + ${bscolor} + 'alert-dismissible fade show'"
+  role="alert"
+  th:text="${message}"
+>
+  This is a success alert—check it out!
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>

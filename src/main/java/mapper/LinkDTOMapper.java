@@ -2,7 +2,6 @@ package mapper;
 
 import org.springframework.stereotype.Service;
 
-
 import com.thee5176.webarchive.dto.LinkDTO;
 import com.thee5176.webarchive.model.Link;
 
@@ -26,6 +25,7 @@ public class LinkDTOMapper {
 		link.setDescription(dto.description());
 		// Tag is set to null here, as it will be set later in the service layer
 		link.setTag(null);
+		
 		return link;
 	}
 }
