@@ -31,9 +31,9 @@ public class TagController {
 	
 	@GetMapping("/tag")
 	public ModelAndView getTagListView(ModelAndView mav) {
-		mav.setViewName("tag/main");
+		mav.setViewName("main");
 		List<Tag> tagList = tagRepository.findAll();
-		mav.addObject("title", "Tag List");
+		mav.addObject("title", "タッグ一覧");
 		mav.addObject("object_list", tagList);
 		return mav;
 	}
