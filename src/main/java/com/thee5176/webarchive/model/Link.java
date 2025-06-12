@@ -1,7 +1,6 @@
 package com.thee5176.webarchive.model;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
