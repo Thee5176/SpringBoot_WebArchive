@@ -59,19 +59,14 @@ public class TagController {
 	@DeleteMapping("/tag/delete/{id}")
 	public ModelAndView deleteTag(@PathVariable long id,
 			RedirectAttributes redirectAttribute) {
-		Map<String,String> alert = new HashMap<>();
 		if ( tagRepository.existsById(id) ) {
 			
 			tagRepository.deleteById(id);
 			tagRepository.flush();
 			
-			alert.put("bscolor", "success");
-			alert.put("message", "Bookmark deleted successfully");
 		} else {
-			alert.put("bscolor", "danger");
-			alert.put("message", "Bookmark with id " + id + " not exist");
+			throw new RuntimeException("Bookmark with id " + id + " not exist");
 		}
-		redirectAttribute.addFlashAttribute(alert);
 		return new ModelAndView("redirect:/tag");
 	}
 }
