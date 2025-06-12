@@ -71,16 +71,20 @@ public class LinkController {
 			BindingResult result,
 			RedirectAttributes redirectAttributes) {
 		Map<String,String> alert = new HashMap<>();
-		try {
-			
-			linkService.createLinkWithTag(link);
-			
-			alert.put("bscolor", "success");
-			alert.put("message", "New Bookmark created successfully");
-		} catch (RuntimeException e) {
-			alert.put("bscolor", "danger");
-			alert.put("message", e.getMessage());
+		if (!result.hasErrors()) {
+			try {
+					linkService.createLinkWithTag(link);
+					
+					alert.put("bscolor", "success");
+					alert.put("message", "New Bookmark created successfully");
+				} catch (RuntimeException e) {
+					alert.put("bscolor", "danger");
+					alert.put("message", e.getMessage());
+				}
+		} else {
+			return new ModelAndView("redirect:/bookmark");
 		}
+		
 		redirectAttributes.addFlashAttribute(alert);
 		return new ModelAndView("redirect:/bookmark");
 	}

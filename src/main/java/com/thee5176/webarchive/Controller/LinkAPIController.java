@@ -72,7 +72,7 @@ public class LinkAPIController {
 	public ResponseEntity<String> createBookmarkAPI(
 			@ModelAttribute("bookmarkForm") @Validated LinkDTO linkDto, BindingResult result) {
 		try {
-			linkService.saveLinkWithTag(linkDto);
+			linkService.createLinkWithTag(linkDto);
 			return new ResponseEntity<String>("New Bookmark created successfully", HttpStatus.CREATED);
 		} catch (RuntimeException e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
