@@ -38,7 +38,7 @@ public class LinkController {
 
 	@GetMapping("/bookmark")
 	public ModelAndView getBookmarksListView(ModelAndView mav) {
-		mav.setViewName("bookmark/main");
+		mav.setViewName("base");
 		List<Link> bookmarkList = linkRepository.findAll();
 		mav.addObject("title", "Webブックマーク一覧");
 		mav.addObject("object_list", bookmarkList);

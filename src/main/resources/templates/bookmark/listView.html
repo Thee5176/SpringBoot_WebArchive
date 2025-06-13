@@ -1,0 +1,86 @@
+<html>
+  <div th:fragment="header">
+    <h1 th:text="${title}"></h1>
+    <!--Add Bookmark Button-->
+    <a class="btn btn-sm btn-dark ms-3" href="bookmark/form"> + </a>
+
+    <!--Alert Message-->
+    <div
+      th:if="${msg}"
+      th:class=" 'alert alert-' + ${color} +'alert-dismissible fade show' "
+      th:message="${msg}"
+    >
+      <!--Close Button for Alert Message-->
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <div th:fragment="main">
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="table table-hover" id="bookmarksTable">
+        <!--Table Head-->
+        <thead class="table-light">
+          <tr>
+            <th>Website名</th>
+            <th>
+              <div class="d-flex align-items-center">
+                <span class="me-2">タッグ</span>
+                <!--Add Tag Button-->
+                <a class="btn btn-sm btn-dark ms-3" href="tag/form"> + </a>
+              </div>
+            </th>
+            <th>詳細</th>
+            <th>処理</th>
+          </tr>
+        </thead>
+        <!--Table Body-->
+        <tbody>
+          <tr th:each="object : ${object_list}">
+            <td>
+              <a
+                href="www.google.com"
+                th:href="${object.url}"
+                th:text="${object.name}"
+                target="_blank"
+                >Google</a
+              >
+            </td>
+            <td th:text="${object.tag.name}">Search Engine</td>
+            <td th:text="${object.description}">
+              標準的に使われるサーチエンジンサイト
+            </td>
+            <td>
+              <button
+                class="btn btn-sm btn-primary ms-3"
+                data-bs-toggle="modal"
+                data-bs-target="#BookmarkModal"
+                th:hx-get="'/bookmark/id/'+${object.id}"
+                hx-trigger="click"
+                hx-target="#addBookmarkModal"
+                hx-swap="innerHTML"
+              >
+                詳細
+              </button>
+              <button
+                class="btn btn-sm btn-danger ms-3"
+                hx-trigger="click"
+                th:hx-delete="'/bookmark/delete/' + ${object.id}"
+                hx-confirm="本当に削除しますか？"
+              >
+                削除
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</html>
