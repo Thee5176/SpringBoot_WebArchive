@@ -2,7 +2,17 @@
   <div th:fragment="header">
     <h1 th:text="${title}"></h1>
     <!--Add Bookmark Button-->
-    <a class="btn btn-sm btn-dark ms-3" href="bookmark/form"> + </a>
+    <button
+      class="btn btn-sm btn-dark ms-3"
+      data-bs-toggle="modal"
+      data-bs-target="#Modal"
+      hx-get="bookmark/form/modal"
+      hx-trigger="click"
+      hx-target="#addModal"
+      hx-swap="innerHTML"
+    >
+      +
+    </button>
 
     <!--Detail Modal-->
     <div
@@ -50,7 +60,17 @@
               <div class="d-flex align-items-center">
                 <span class="me-2">タッグ</span>
                 <!--Add Tag Button-->
-                <a class="btn btn-sm btn-dark ms-3" href="tag/form"> + </a>
+                <button
+                  class="btn btn-sm btn-dark ms-3"
+                  data-bs-toggle="modal"
+                  data-bs-target="#Modal"
+                  hx-get="tag/form/modal"
+                  hx-trigger="click"
+                  hx-target="#addModal"
+                  hx-swap="innerHTML"
+                >
+                  +
+                </button>
               </div>
             </th>
             <th>詳細</th>

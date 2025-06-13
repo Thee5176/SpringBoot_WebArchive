@@ -1,6 +1,6 @@
 <html>
   <div th:fragment="header">
-    <h1 th:text="${title}"></h1>
+    <h1 th:unless="${modalFlag}" th:text="${title}"></h1>
 
     <!--Alert Message-->
     <div
@@ -22,9 +22,10 @@
 
   <form
     th:fragment="main"
+    th:object="${bookmarkForm}"
     method="POST"
     action="/bookmark/create"
-    th:object="${bookmarkForm}"
+    class="m-4 p-4"
   >
     <div class="form-header">
       <h3 class="modal-title">新しいブックマーク</h3>

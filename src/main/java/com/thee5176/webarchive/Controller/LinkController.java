@@ -3,6 +3,7 @@ package com.thee5176.webarchive.Controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -56,13 +57,19 @@ public class LinkController {
 	}
 
 
-	@GetMapping("/bookmark/form")
+	@GetMapping(value={"/bookmark/form","/bookmark/form/{modalFlag}"})
 	// dynamic tag selector
-	public ModelAndView getBookmarkForm(ModelAndView mav) {
-		mav.setViewName("base");
+	public ModelAndView getBookmarkForm(@PathVariable Optional<String> modalFlag,
+			ModelAndView mav) {
 		List<Tag> objectList = tagRepository.findAll();
 		mav.addObject("object_list", objectList);
-		mav.addObject("dynamicFragment", "/bookmark/formView");
+		if( modalFlag.isPresent() && modalFlag.equals("modal")) {
+			mav.setViewName("/bookmark/formView");
+			mav.addObject("modalFlag", true);
+		} else {
+			mav.setViewName("base");
+			mav.addObject("dynamicFragment", "/bookmark/formView");
+		}
 		return mav;
 	}
 

@@ -3,6 +3,7 @@ package com.thee5176.webarchive.Controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,12 +40,18 @@ public class TagController {
 		return mav;
 	}
 	
-	@GetMapping("/tag/form")
+	@GetMapping(value={"/tag/form","/tag/form/{modalFlag}"})
 	// dynamic tag selector
-	public ModelAndView getTagForm(ModelAndView mav) {
-		mav.setViewName("base");
-		mav.addObject("dynamicFragment","/tag/formView");
-		return mav;
+	public ModelAndView getTagForm(@PathVariable Optional<String> modalFlag,
+			ModelAndView mav) {
+				if( modalFlag.isPresent() && modalFlag.equals("modal")) {
+					mav.setViewName("/tag/formView");
+					mav.addObject("modalFlag", true);
+				} else {
+					mav.setViewName("base");
+					mav.addObject("dynamicFragment", "/tag/formView");
+				}
+				return mav;
 	}
 
 	@PostMapping("/tag/create")
