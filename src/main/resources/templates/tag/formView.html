@@ -1,0 +1,63 @@
+<html>
+  <div th:fragment="header">
+    <h1 th:text="${title}"></h1>
+
+    <!--Alert Message-->
+    <div
+      th:if="${msg}"
+      th:class=" 'alert alert-' + ${color} +'alert-dismissible fade show' "
+      th:message="${msg}"
+    >
+      <!--Close Button for Alert Message-->
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <form
+    th:fragment="main"
+    id="tagForm"
+    method="POST"
+    action="/tag/create"
+    th:object="${tagForm}"
+  >
+    <div class="form-header">
+      <h5 class="modal-title" id="tagModalLabel">新しいタッグ</h5>
+    </div>
+    <div class="form-body">
+      <div class="mb-3">
+        <label for="tagName" class="form-label">タッグ名</label>
+        <input
+          name="name"
+          type="text"
+          class="form-control"
+          id="tagName"
+          placeholder="タッグ名"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="tagName" class="form-label">説明</label>
+        <input
+          name="description"
+          type="text"
+          class="form-control"
+          id="tagDescription"
+          placeholder="説明"
+          required
+        />
+      </div>
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-success" id="submitTag">
+          確定
+        </button>
+      </div>
+    </div>
+  </form>
+</html>

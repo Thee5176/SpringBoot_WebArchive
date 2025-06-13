@@ -42,6 +42,7 @@ public class LinkController {
 		List<Link> bookmarkList = linkRepository.findAll();
 		mav.addObject("title", "Webブックマーク一覧");
 		mav.addObject("object_list", bookmarkList);
+		mav.addObject("dynamicFragment","/bookmark/listView");
 		return mav;
 	}
 
@@ -55,13 +56,13 @@ public class LinkController {
 	}
 
 
-	@GetMapping("/form/bookmark")
+	@GetMapping("/bookmark/form")
 	// dynamic tag selector
 	public ModelAndView getBookmarkForm(ModelAndView mav) {
-		mav.setViewName("bookmark/form");
+		mav.setViewName("base");
 		List<Tag> objectList = tagRepository.findAll();
 		mav.addObject("object_list", objectList);
-
+		mav.addObject("dynamicFragment", "/bookmark/formView");
 		return mav;
 	}
 

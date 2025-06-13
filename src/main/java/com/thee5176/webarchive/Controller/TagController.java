@@ -31,13 +31,22 @@ public class TagController {
 	
 	@GetMapping("/tag")
 	public ModelAndView getTagListView(ModelAndView mav) {
-		mav.setViewName("main");
+		mav.setViewName("base");
 		List<Tag> tagList = tagRepository.findAll();
 		mav.addObject("title", "タッグ一覧");
 		mav.addObject("object_list", tagList);
+		mav.addObject("dynamicFragment","/tag/listView");
 		return mav;
 	}
 	
+	@GetMapping("/tag/form")
+	// dynamic tag selector
+	public ModelAndView getTagForm(ModelAndView mav) {
+		mav.setViewName("base");
+		mav.addObject("dynamicFragment","/tag/formView");
+		return mav;
+	}
+
 	@PostMapping("/tag/create")
 	public ModelAndView createTag(@ModelAttribute TagDTO tag,
 			RedirectAttributes redirectAttributes) {
