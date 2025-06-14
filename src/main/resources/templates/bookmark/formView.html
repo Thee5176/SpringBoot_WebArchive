@@ -1,28 +1,6 @@
-<html>
-  <div th:fragment="header">
-    <h1 th:unless="${modalFlag}" th:text="${title}"></h1>
-
-    <!--Alert Message-->
-    <div
-      th:if="${msg}"
-      th:class=" 'alert alert-' + ${color} +'alert-dismissible fade show' "
-      th:message="${msg}"
-    >
-      <!--Close Button for Alert Message-->
-      <button
-        type="button"
-        class="close"
-        data-dismiss="alert"
-        aria-label="Close"
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  </div>
-
+<div layout:fragment="main">
   <form
-    th:fragment="main"
-    th:object="${bookmarkForm}"
+    th:object="${formData}"
     method="POST"
     action="/bookmark/create"
     class="m-4 p-4"
@@ -39,7 +17,14 @@
           class="form-control"
           id="websiteName"
           placeholder="Website名"
+          th:field="${formData.name}"
         />
+        <div
+          class="text text-danger"
+          th:if="${#fields.hasErrors('name')}"
+          th:errors="*{name}"
+          th:errorclass="err"
+        ></div>
       </div>
       <div class="mb-3">
         <label for="websiteLink" class="form-label">リンク</label>
@@ -49,7 +34,14 @@
           class="form-control"
           id="websiteLink"
           placeholder="https://example.com"
+          th:field="${formData.url}"
         />
+        <div
+          class="text text-danger"
+          th:if="${#fields.hasErrors('url')}"
+          th:errors="*{url}"
+          th:errorclass="err"
+        ></div>
       </div>
       <div class="mb-3">
         <label for="websiteTag" class="form-label">タッグ</label>
@@ -62,6 +54,12 @@
             Tag Name
           </option>
         </select>
+        <div
+          class="text text-danger"
+          th:if="${#fields.hasErrors('tagId')}"
+          th:errors="*{tagId}"
+          th:errorclass="err"
+        ></div>
       </div>
       <div class="mb-3">
         <label for="websiteDescription" class="form-label">説明</label>
@@ -71,7 +69,14 @@
           class="form-control"
           id="websiteDescription"
           placeholder="説明"
+          th:field="${formData.description}"
         />
+        <div
+          class="text text-danger"
+          th:if="${#fields.hasErrors('description')}"
+          th:errors="*{description}"
+          th:errorclass="err"
+        ></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -80,4 +85,4 @@
       </button>
     </div>
   </form>
-</html>
+</div>
