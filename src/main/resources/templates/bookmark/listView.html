@@ -14,22 +14,6 @@
       +
     </button>
 
-    <!--Detail Modal-->
-    <div
-      class="modal fade"
-      id="Modal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="ModalLabel"
-      aria-modal="true"
-    >
-      <div class="modal-dialog" role="document">
-        <div id="addModal" class="modal-content">
-          <!--form for HTMX insert modal-->
-        </div>
-      </div>
-    </div>
-
     <!--Alert Message-->
     <div
       th:if="${msg}"
@@ -94,6 +78,7 @@
               標準的に使われるサーチエンジンサイト
             </td>
             <td>
+              <!--Bookmark Detail Button-->
               <button
                 class="btn btn-sm btn-primary ms-3"
                 data-bs-toggle="modal"
