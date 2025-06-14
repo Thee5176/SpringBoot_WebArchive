@@ -1,6 +1,6 @@
 <html>
-  <div th:fragment="header">
-    <h1 th:unless="${modalFlag}" th:text="${title}"></h1>
+  <div th:unless="${modalFlag}" th:fragment="header">
+    <h1 th:text="${title}"></h1>
 
     <!--Alert Message-->
     <div
@@ -33,18 +33,18 @@
     </div>
     <div class="form-body">
       <div class="mb-3">
-        <label for="tagName" class="form-label">タッグ名</label>
+        <label for="tagTitle" class="form-label">タッグ名</label>
         <input
           name="name"
           type="text"
           class="form-control"
-          id="tagName"
+          id="tagTitle"
           placeholder="タッグ名"
           required
         />
       </div>
       <div class="mb-3">
-        <label for="tagName" class="form-label">説明</label>
+        <label for="tagDescription" class="form-label">説明</label>
         <input
           name="description"
           type="text"
