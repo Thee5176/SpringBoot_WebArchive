@@ -101,6 +101,7 @@ public class TagController {
 		} else {
 			alertMessage = new AlertMessage("danger", "Tag with id " + id + " not exist");
 		}
+		redirectAttribute.addAttribute("alert", alertMessage);
 		return new ModelAndView("redirect:/tag");
 	}
 }
