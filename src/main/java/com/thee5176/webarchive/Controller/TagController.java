@@ -1,27 +1,25 @@
 package com.thee5176.webarchive.Controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thee5176.webarchive.Repository.TagRepository;
 import com.thee5176.webarchive.Service.TagService;
+import com.thee5176.webarchive.dto.AlertMessage;
 import com.thee5176.webarchive.dto.TagDTO;
 import com.thee5176.webarchive.model.Tag;
 
-@RestController
 @Controller
 public class TagController {
 	@Autowired
@@ -34,45 +32,69 @@ public class TagController {
 	public ModelAndView getTagListView(ModelAndView mav) {
 		mav.setViewName("base");
 		List<Tag> tagList = tagRepository.findAll();
-		mav.addObject("title", "タッグ一覧");
 		mav.addObject("object_list", tagList);
+		mav.addObject("title", "タッグ一覧");
 		mav.addObject("dynamicFragment","/tag/listView");
 		return mav;
 	}
 	
-	@GetMapping(value={"/tag/form","/tag/form/{modalFlag}"})
+	@GetMapping("/tag/form")
 	// dynamic tag selector
-	public ModelAndView getTagForm(@PathVariable Optional<String> modalFlag,
-			ModelAndView mav) {
-				if( modalFlag.isPresent() && modalFlag.equals("modal")) {
-					mav.setViewName("/tag/formView");
-					mav.addObject("modalFlag", true);
-				} else {
-					mav.setViewName("base");
-					mav.addObject("dynamicFragment", "/tag/formView");
-				}
-				return mav;
+	public ModelAndView getTagForm(
+		ModelAndView mav) {
+			mav.setViewName("base");
+			TagDTO emptyDto = new TagDTO(null, null);
+			mav.addObject("formData", emptyDto);
+			mav.addObject("dynamicPath", "create");
+			mav.addObject("dynamicFragment", "tag/formView");
+
+		return mav;
 	}
 
 	@PostMapping("/tag/create")
-	public ModelAndView createTag(@ModelAttribute TagDTO tag,
-			RedirectAttributes redirectAttributes) {
-		Map<String,String> alert = new HashMap<>();
-		try {
+	public ModelAndView createTag(
+		@ModelAttribute("formData") @Validated TagDTO tagDto,
+		BindingResult result,
+		AlertMessage alertMessage,
+		ModelAndView mav) {
+		if (!result.hasErrors()) {
+			try {
+				tagService.createTag(tagDto);
+				
+				//No Exception -> return redirect
+				mav.setViewName("redirect:/tag");
 			
-			tagService.createTag(tag);
+				alertMessage = new AlertMessage("success","New Tag created successfully");
+			} catch (RuntimeException e) {
+				//Exception -> render form with previous data
+				mav.addObject("formData", tagDto);
+				
+				//return form
+				mav.setViewName("base");
+				mav.addObject("dynamicPath", "create");
+				mav.addObject("dynamicFragment","/tag/formView");
+
+				alertMessage = new AlertMessage("danger",e.getMessage());
+			} finally {
+				mav.addObject("alert",alertMessage);
+			}
+
+		} else {
+			// Validation Error -> Show Error Message(View Layer)
+			mav.addObject("formData", tagDto);
+			mav.setViewName("base");
+			mav.addObject("dynamicPath", "create");
+			mav.addObject("dynamicFragment","/tag/formView");
 			
-			alert.put("bscolor", "success");
-			alert.put("message", "New Bookmark created successfully");
-		} catch (Exception e) {
-			alert.put("bscolor", "danger");
-			alert.put("message", e.getMessage());
+			//return form
+			List<Tag> objectList = tagRepository.findAll();
+			mav.addObject("object_list", objectList);
 		}
-		redirectAttributes.addFlashAttribute(alert);
-		return new ModelAndView("redirect:/tag");
+		
+		return mav;
 	}
 	
-	@DeleteMapping("/tag/delete/{id}")
+	@GetMapping("/tag/delete/{id}")
 	public ModelAndView deleteTag(@PathVariable long id,
 			RedirectAttributes redirectAttribute) {
 		if ( tagRepository.existsById(id) ) {
@@ -81,7 +103,7 @@ public class TagController {
 			tagRepository.flush();
 			
 		} else {
-			throw new RuntimeException("Bookmark with id " + id + " not exist");
+			throw new RuntimeException("Tag with id " + id + " not exist");
 		}
 		return new ModelAndView("redirect:/tag");
 	}

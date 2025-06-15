@@ -1,7 +1,6 @@
 package com.thee5176.webarchive.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thee5176.webarchive.Repository.LinkRepository;
@@ -19,10 +19,9 @@ import com.thee5176.webarchive.Repository.TagRepository;
 import com.thee5176.webarchive.Service.LinkService;
 import com.thee5176.webarchive.dto.AlertMessage;
 import com.thee5176.webarchive.dto.LinkDTO;
+import com.thee5176.webarchive.mapper.LinkDTOMapper;
 import com.thee5176.webarchive.model.Link;
 import com.thee5176.webarchive.model.Tag;
-
-import mapper.LinkDTOMapper;
 
 import org.springframework.stereotype.Controller;
 
@@ -38,17 +37,24 @@ public class LinkController {
 	LinkService linkService;
 
 	@GetMapping("/bookmark")
-	public ModelAndView getBookmarksListView(ModelAndView mav) {
+	public ModelAndView getBookmarksListView(
+		@ModelAttribute("alertMessage") AlertMessage alertMessage,
+		ModelAndView mav) {
 		mav.setViewName("base");
 		List<Link> bookmarkList = linkRepository.findAll();
 		mav.addObject("title", "Webブックマーク一覧");
 		mav.addObject("object_list", bookmarkList);
-		mav.addObject("dynamicFragment","/bookmark/listView");
+		mav.addObject("dynamicFragment", "/bookmark/listView");
+		
+		mav.addObject("alert", alertMessage);
 		return mav;
 	}
 
 	@GetMapping("/bookmark/id/{id}")
-	public ModelAndView getDetailView(@PathVariable long id, ModelAndView mav) {
+	public ModelAndView getDetailView(
+			@PathVariable long id,
+			ModelAndView mav
+		) {
 		mav.setViewName("bookmark/detail_modal");
 		Link link = linkRepository.findById(id)
 				.orElseThrow();
@@ -57,16 +63,18 @@ public class LinkController {
 	}
 
 
-	@GetMapping(value={"/bookmark/form","/bookmark/form/{modalFlag}"})
+	@GetMapping("/bookmark/form")
 	// dynamic tag selector
-	public ModelAndView getBookmarkForm(@PathVariable Optional<String> modalFlag,
-			ModelAndView mav) {
+	public ModelAndView getBookmarkForm(
+		ModelAndView mav
+		) {
 		List<Tag> objectList = tagRepository.findAll();
 		mav.addObject("object_list", objectList);
 
 		LinkDTO emptyDto = new LinkDTO("", "", "", 0L);
 		mav.addObject("formData", emptyDto);
 		mav.setViewName("base");
+		mav.addObject("dynamicPath", "create");
 		mav.addObject("dynamicFragment", "/bookmark/formView");
 		return mav;
 	}
@@ -76,61 +84,66 @@ public class LinkController {
 			@ModelAttribute("formData") @Validated LinkDTO linkDto, 
 			BindingResult result,
 			RedirectAttributes redirectAttributes,
-			ModelAndView mav, 
-			AlertMessage alertMessage
+			AlertMessage alertMessage,
+			ModelAndView mav
 		) {
-			if (!result.hasErrors()) {
-				try {
-					linkService.createLinkWithTag(linkDto);
-					
-					//No Exception -> return redirect
-					mav.setViewName("redirect:/bookmark");
+		if (!result.hasErrors()) {
+			try {
+				linkService.createLinkWithTag(linkDto);
 				
-					alertMessage = new AlertMessage("success","New Bookmark created successfully");
-				} catch (RuntimeException e) {
-					//Exception -> render form with previous data
-					mav.addObject("formData", linkDto);
-					mav.setViewName("base");
-					
-					//return form
-					List<Tag> objectList = tagRepository.findAll();
-					mav.addObject("object_list", objectList);
-					mav.addObject("dynamicFragment","/bookmark/formView");
+				alertMessage = new AlertMessage("success","New Bookmark created successfully");
+				redirectAttributes.addAttribute("alert", alertMessage);
+				//No Exception -> return redirect
+				mav.setViewName("redirect:/bookmark");
+			} catch (RuntimeException e) {
+				//Exception -> render form with previous data
+				mav.addObject("formData", linkDto);
+				
+				//return form
+				List<Tag> objectList = tagRepository.findAll();
+				mav.setViewName("base");
+				mav.addObject("object_list", objectList);
+				mav.addObject("dynamicPath", "create");
+				mav.addObject("dynamicFragment","/bookmark/formView");
 
-					alertMessage = new AlertMessage("danger",e.getMessage());
-				} finally {
-					mav.addObject("alert",alertMessage);
-				}
+				alertMessage = new AlertMessage("danger",e.getMessage());
+			} finally {
+				mav.addObject("alert",alertMessage);
+			}
 
 		} else {
 			// Validation Error -> Show Error Message(View Layer)
 			mav.addObject("formData", linkDto);
 			mav.setViewName("base");
+			mav.addObject("dynamicPath", "create");
+			mav.addObject("dynamicFragment","/bookmark/formView");
 			
 			//return form
 			List<Tag> objectList = tagRepository.findAll();
 			mav.addObject("object_list", objectList);
-			mav.addObject("dynamicFragment","/bookmark/formView");
 		}
 		
 		return mav;
 	}
 
-	@GetMapping("bookmark/update/{id}")
-	public ModelAndView updateBookmark(
+	@GetMapping("bookmark/form/{id}")
+	public ModelAndView getBookmarkUpdateForm(
 		@PathVariable long id,
 		AlertMessage alertMessage,
 		ModelAndView mav
 	) {
 		mav.setViewName("base");
 		mav.addObject("dynamicFragment", "/bookmark/formView");
-
+		mav.addObject("dynamicPath", "update/" + id);
+		mav.addObject("title","ブックマーク更新");
 		List<Tag> objectList = tagRepository.findAll();
 		mav.addObject("object_list", objectList);
+
 		try {
 			LinkDTO retrievedLinkDto = LinkDTOMapper.map(
 				linkRepository.findById(id)
-					.orElseThrow(() -> new RuntimeException("Bookmark with id" + id + "not exist")));
+				.orElseThrow(() -> new RuntimeException("Bookmark with id" + id + "not exist"))
+			);
 			mav.addObject("formData", retrievedLinkDto);
 		} catch (Exception e) {
 			alertMessage = new AlertMessage("danger", e.getMessage());
@@ -140,10 +153,51 @@ public class LinkController {
 		return mav;
 	}
 
-	@DeleteMapping("bookmark/delete/{id}")
-	public ModelAndView deleteLink(@PathVariable long id,
+	@PostMapping("bookmark/update/{id}")
+	public ModelAndView updateBookmark(
+		@ModelAttribute("formData") @Validated LinkDTO linkDto,
+		@PathVariable long id,
+		BindingResult result,
 		AlertMessage alertMessage,
 		ModelAndView mav) {
+		
+		if (!result.hasErrors()) {
+			try {
+				linkService.updateLinkWithTag(id, linkDto);
+				
+				// No Exception -> redirect to listView
+				mav.setViewName("redirect:/bookmark");
+				alertMessage = new AlertMessage("success","Bookmark id" + id +"updated successfully");
+			} catch (Exception e) {
+				// Exception -> rerender update form
+				mav.setViewName("base");
+				List<Tag> objectList = tagRepository.findAll();
+				mav.addObject("object_list", objectList);
+				mav.addObject("formData", linkDto);
+				mav.addObject("dynamicFragment", "/bookmark/formView");
+				mav.addObject("dynamicPath", "update/" + id);
+				alertMessage = new AlertMessage("danger", e.getMessage());
+			} finally {
+				mav.addObject("alert", alertMessage);
+			}
+		} else {
+			// Validation Error -> rerender update form
+			mav.setViewName("base");
+			List<Tag> objectList = tagRepository.findAll();
+			mav.addObject("object_list", objectList);
+			mav.addObject("formData", linkDto);
+			mav.addObject("dynamicFragment", "/bookmark/formView");
+			mav.addObject("dynamicPath", "update/" + id);
+		}
+		
+		return mav;
+	}
+
+	@GetMapping("bookmark/delete/{id}")
+	public String deleteLink(
+		@PathVariable long id,
+		AlertMessage alertMessage,
+		Model model) {
 		if (linkRepository.existsById(id)) {
 			
 			linkRepository.deleteById(id);
@@ -153,8 +207,7 @@ public class LinkController {
 		} else {
 			alertMessage = new AlertMessage("danger","Bookmark with id " + id + " not exist");
 		}
-		mav.addObject(alertMessage);
-		mav.setViewName("redirect:/bookmark");
-		return mav;
+		model.addAttribute(alertMessage);
+		return "redirect:/bookmark";
 	}
 }
