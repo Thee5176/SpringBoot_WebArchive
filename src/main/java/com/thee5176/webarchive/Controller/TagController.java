@@ -6,13 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thee5176.webarchive.Repository.TagRepository;
 import com.thee5176.webarchive.Service.TagService;
@@ -31,22 +29,21 @@ public class TagController {
 	@GetMapping("/tag")
 	public ModelAndView getTagListView(ModelAndView mav) {
 		mav.setViewName("base");
+		mav.addObject("dynamicFragment", "/tag/listView");
 		List<Tag> tagList = tagRepository.findAll();
 		mav.addObject("object_list", tagList);
 		mav.addObject("title", "タッグ一覧");
-		mav.addObject("dynamicFragment","/tag/listView");
 		return mav;
 	}
 	
 	@GetMapping("/tag/form")
 	// dynamic tag selector
-	public ModelAndView getTagForm(
-		ModelAndView mav) {
+	public ModelAndView getTagForm(ModelAndView mav) {
 			mav.setViewName("base");
 			TagDTO emptyDto = new TagDTO(null, null);
 			mav.addObject("formData", emptyDto);
 			mav.addObject("dynamicPath", "create");
-			mav.addObject("dynamicFragment", "tag/formView");
+			mav.addObject("dynamicFragment", "/tag/formView");
 
 		return mav;
 	}
@@ -75,8 +72,6 @@ public class TagController {
 				mav.addObject("dynamicFragment","/tag/formView");
 
 				alertMessage = new AlertMessage("danger",e.getMessage());
-			} finally {
-				mav.addObject("alert",alertMessage);
 			}
 
 		} else {
@@ -96,14 +91,15 @@ public class TagController {
 	
 	@GetMapping("/tag/delete/{id}")
 	public ModelAndView deleteTag(@PathVariable long id,
-			RedirectAttributes redirectAttribute) {
+		AlertMessage alertMessage) {
 		if ( tagRepository.existsById(id) ) {
 			
 			tagRepository.deleteById(id);
 			tagRepository.flush();
 			
+			alertMessage = new AlertMessage("success", "Tag deleted successfully");
 		} else {
-			throw new RuntimeException("Tag with id " + id + " not exist");
+			alertMessage = new AlertMessage("danger", "Tag with id " + id + " not exist");
 		}
 		return new ModelAndView("redirect:/tag");
 	}

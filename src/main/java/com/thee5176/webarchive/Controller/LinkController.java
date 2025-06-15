@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -107,8 +106,6 @@ public class LinkController {
 				mav.addObject("dynamicFragment","/bookmark/formView");
 
 				alertMessage = new AlertMessage("danger",e.getMessage());
-			} finally {
-				mav.addObject("alert",alertMessage);
 			}
 
 		} else {
@@ -132,19 +129,19 @@ public class LinkController {
 		AlertMessage alertMessage,
 		ModelAndView mav
 	) {
-		mav.setViewName("base");
-		mav.addObject("dynamicFragment", "/bookmark/formView");
-		mav.addObject("dynamicPath", "update/" + id);
-		mav.addObject("title","ブックマーク更新");
-		List<Tag> objectList = tagRepository.findAll();
-		mav.addObject("object_list", objectList);
-
 		try {
 			LinkDTO retrievedLinkDto = LinkDTOMapper.map(
 				linkRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Bookmark with id" + id + "not exist"))
 			);
 			mav.addObject("formData", retrievedLinkDto);
+
+			mav.setViewName("base");
+			mav.addObject("dynamicFragment", "/bookmark/formView");
+			mav.addObject("dynamicPath", "update/" + id);
+			mav.addObject("title","ブックマーク更新");
+			List<Tag> objectList = tagRepository.findAll();
+			mav.addObject("object_list", objectList);
 		} catch (Exception e) {
 			alertMessage = new AlertMessage("danger", e.getMessage());
 			mav.setViewName("redirect:/bookmark");
@@ -156,8 +153,8 @@ public class LinkController {
 	@PostMapping("bookmark/update/{id}")
 	public ModelAndView updateBookmark(
 		@ModelAttribute("formData") @Validated LinkDTO linkDto,
-		@PathVariable long id,
 		BindingResult result,
+		@PathVariable long id,
 		AlertMessage alertMessage,
 		ModelAndView mav) {
 		
@@ -177,8 +174,6 @@ public class LinkController {
 				mav.addObject("dynamicFragment", "/bookmark/formView");
 				mav.addObject("dynamicPath", "update/" + id);
 				alertMessage = new AlertMessage("danger", e.getMessage());
-			} finally {
-				mav.addObject("alert", alertMessage);
 			}
 		} else {
 			// Validation Error -> rerender update form
@@ -207,7 +202,6 @@ public class LinkController {
 		} else {
 			alertMessage = new AlertMessage("danger","Bookmark with id " + id + " not exist");
 		}
-		model.addAttribute(alertMessage);
 		return "redirect:/bookmark";
 	}
 }
