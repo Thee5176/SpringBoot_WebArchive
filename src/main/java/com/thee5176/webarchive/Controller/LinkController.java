@@ -89,7 +89,7 @@ public class LinkController {
 		// display alert message
 		if (alertMessage != null) {
 			mav.addObject("alert", alertMessage);
-		}
+		} 
 
 		List<Tag> objectList = tagRepository.findAll();
 		mav.addObject("object_list", objectList);
@@ -119,14 +119,18 @@ public class LinkController {
 				
 				redirectAttributes.addFlashAttribute("inputData", linkDto);
 				redirectAttributes.addFlashAttribute("alertMessage", new AlertMessage("danger", e.getMessage()));
+				redirectAttributes.addFlashAttribute("result", result);
 				mav.setViewName("redirect:/bookmark/form");
 			}
 
 		} else {
-			//return form-create with input data
-			
-			redirectAttributes.addFlashAttribute("inputData", linkDto);
-			mav.setViewName("redirect:/bookmark/form");
+			//validation error -> return form-create with input data
+			mav.addObject("formData", linkDto);
+
+			mav.setViewName("base");
+			mav.addObject("dynamicFragment", "/bookmark/formView");
+			mav.addObject("dynamicPath", "create");
+			mav.addObject("formTitle", "ブックマーク作成");
 		}
 		
 		return mav;
@@ -152,15 +156,16 @@ public class LinkController {
 				mav.addObject("formData", retrievedLinkDto);
 			}
 			
-			// Tag selection option fields
-			List<Tag> objectList = tagRepository.findAll();
-			mav.addObject("object_list", objectList);
-
 			// display alert message
 			if (alertMessage != null) {
 				mav.addObject("alert", alertMessage);
 			}
-
+			
+			
+			// Tag selection option fields
+			List<Tag> objectList = tagRepository.findAll();
+			mav.addObject("object_list", objectList);
+			// render form
 			mav.setViewName("base");
 			mav.addObject("dynamicFragment", "/bookmark/formView");
 			mav.addObject("dynamicPath", "update/" + id);
@@ -198,8 +203,11 @@ public class LinkController {
 		} else {
 			// Validation Error -> rerender update form
 
-			redirectAttributes.addFlashAttribute("inputData", linkDto);
-			mav.setViewName("redirect:/bookmark/form/" + id);
+			mav.addObject("formData", linkDto);
+			mav.setViewName("base");
+			mav.addObject("dynamicFragment", "/bookmark/formView");
+			mav.addObject("dynamicPath", "update/" + id);
+			mav.addObject("formTitle", "ブックマーク更新");
 		}
 		
 		return mav;
