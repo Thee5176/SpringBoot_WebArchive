@@ -146,14 +146,14 @@ public class LinkController {
 	) {
 		try {
 			// retreive data from Repository
-			if (linkDto != null) {
-				mav.addObject("formData", linkDto);
-			} else {
+			if (linkDto == null || linkDto.name() == null) {
 				LinkDTO retrievedLinkDto = LinkDTOMapper.map(
 					linkRepository.findById(id)
-						.orElseThrow(() -> new RuntimeException("Bookmark with id" + id + "not exist"))
-				);
+					.orElseThrow(() -> new RuntimeException("Bookmark with id" + id + "not exist"))
+					);
 				mav.addObject("formData", retrievedLinkDto);
+			} else {
+				mav.addObject("formData", linkDto);
 			}
 			
 			// display alert message
