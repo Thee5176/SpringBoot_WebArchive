@@ -39,6 +39,21 @@
   </head>
 
   <body class="p-4">
+    <!--Alert Message-->
+    <div
+      th:if="${alert}"
+      class="alert alert-dismissible fade show fixed-top"
+      th:classappend="${'alert-' + alert.color}"
+      style="z-index: 1050"
+    >
+      <span class="text text-sm" th:text="${alert.msg}"></span>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
     <!--main fragment-->
     <main layout:replace="~{${dynamicFragment} :: main}"></main>
 

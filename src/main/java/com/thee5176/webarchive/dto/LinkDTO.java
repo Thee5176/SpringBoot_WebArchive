@@ -18,8 +18,8 @@ public record LinkDTO(
 	@Size(min=2, max=50, message="詳細:2-50文字を抑えてください")
 	String description,
 	
-	@Min( value = 0L, message = "タッグ:選択してください")
-	long tagId
+	@Min( value = 1L, message = "タッグ:選択してください")
+	Long tagId
 ) {
 	
 }

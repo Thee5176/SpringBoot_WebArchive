@@ -61,18 +61,6 @@
     </div>
   </div>
 
-  <!--Alert Message-->
-  <div
-    th:if="${alert}"
-    th:class=" 'alert alert-' + ${alert.color} +'alert-dismissible fade show' "
-  >
-    <span class="text text-sm" th:text="${alert.msg}"></span>
-    <!--Close Button for Alert Message-->
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-
   <!-- Table -->
   <div class="table-responsive">
     <table class="table table-hover" id="bookmarksTable">

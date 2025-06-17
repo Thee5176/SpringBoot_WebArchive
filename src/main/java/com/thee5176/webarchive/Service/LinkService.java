@@ -32,14 +32,14 @@ public class LinkService {
 			// Set the tag for the link entity
 			Tag tag = tagRepository.findById(linkDto.tagId())
 					.orElseThrow(() -> new RuntimeException("Tag with id " + linkDto.tagId() + " not created yet"));
-			link.setTag(tag);
 			link.setCreatedAt(Instant.now());
+					
+			link.setTag(tag);
 			link.setUpdatedAt(Instant.now());
-
 			return linkRepository.saveAndFlush(link);
 
 		} else {
-			throw new RuntimeException("Bookmark already created");
+			throw new RuntimeException("Bookmark with name " + linkDto.name() + " already exist");
 		}
 	}
 	
@@ -55,9 +55,9 @@ public class LinkService {
 		// Set the tag for the link entity
 		Tag tag = tagRepository.findById(linkDto.tagId())
 					.orElseThrow(() -> new RuntimeException("Tag with id " + linkDto.tagId() + " not created yet"));
+					
 		link.setTag(tag);
 		link.setUpdatedAt(Instant.now());
-
 		return linkRepository.saveAndFlush(link);
 	}
 }

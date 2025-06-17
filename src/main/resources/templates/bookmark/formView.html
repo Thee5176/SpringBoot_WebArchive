@@ -6,7 +6,11 @@
     class="m-4 p-4"
   >
     <div class="form-header d-flex">
-      <h3 class="modal-title m-auto" id="tagModalLabel">新しいブックマーク</h3>
+      <h3
+        class="modal-title m-auto"
+        id="tagModalLabel"
+        th:text="${formTitle}"
+      ></h3>
       <a type="button" class="btn btn-sm btn-primary" href="/tag"
         >タッグ一覧へ</a
       >
