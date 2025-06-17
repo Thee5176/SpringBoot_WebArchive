@@ -22,7 +22,7 @@ public class Tag {
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Schema(description = "Tag ID", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
-	private long id;
+	private Long id;
 
 	@NotEmpty(message = "タッグ名：入力してください！")
 	@Size(min=2, max=15, message="タッグ名：2-15文字を抑えてください！")
