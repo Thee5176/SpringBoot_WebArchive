@@ -40,16 +40,18 @@ public class LinkController {
 	public ModelAndView getBookmarksListView(
 		@ModelAttribute("alertMessage") AlertMessage alertMessage,
 		ModelAndView mav) {
+			// display alert message
+			if (alertMessage != null) {
+				mav.addObject("alert", alertMessage);
+			}
+
 		mav.setViewName("base");
-		List<Link> bookmarkList = linkRepository.findAll();
-		mav.addObject("title", "Webブックマーク一覧");
-		mav.addObject("object_list", bookmarkList);
 		mav.addObject("dynamicFragment", "/bookmark/listView");
+
+		mav.addObject("title", "Webブックマーク一覧");
+		List<Link> bookmarkList = linkRepository.findAll();
+		mav.addObject("object_list", bookmarkList);
 		
-		// display alert message
-		if (alertMessage != null) {
-			mav.addObject("alert", alertMessage);
-		}
 		return mav;
 	}
 
@@ -62,8 +64,9 @@ public class LinkController {
 		try {
 			Link link = linkRepository.findById(id)
 				.orElseThrow(()  -> new RuntimeException("Bookmark id" + id +"not found"));
+				mav.setViewName("base");
 			mav.addObject("object", link);
-			mav.setViewName("bookmark/detail_modal");
+			mav.addObject("dynamicFragment","bookmark/detailView");
 		} catch (RuntimeException e) {
 			redirectAttributes.addFlashAttribute("alertMessage", new AlertMessage("danger",e.getMessage()));
 			mav.setViewName("redirect:/bookmark");
