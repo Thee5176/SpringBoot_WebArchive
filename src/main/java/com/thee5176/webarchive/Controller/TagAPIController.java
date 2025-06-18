@@ -37,6 +37,12 @@ public class TagAPIController {
 		return tagRepository.findByName(name)
 				.orElseThrow(() -> new RuntimeException("Tag not found"));
 	}
+
+	@GetMapping("/tag/api/id/{id}")
+	public Tag getListById(@PathVariable Long id) {
+		return tagRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Tag not found"));
+	}
 	
 	@PutMapping("/tag/api/update/{id}")
 	public ResponseEntity<?> updateTag(@RequestBody Tag tag, @PathVariable long id) {

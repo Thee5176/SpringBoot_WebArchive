@@ -27,7 +27,7 @@ public class Link {
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Schema(description = "Link ID", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
-	private long id;
+	private Long id;
 
 	@Column(name = "name", nullable = false, unique = true)
 	@Schema(description = "Website name", example = "GitHub")

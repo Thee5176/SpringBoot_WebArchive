@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${title}"></title>
+    <title>Webブックマークの一覧</title>
     <!-- Bootstrap Icon -->
     <link
       rel="stylesheet"
@@ -39,53 +39,23 @@
   </head>
 
   <body class="p-4">
-    <div class="d-flex align-items-center mb-4">
-      <h1 class="m-0" th:text="${title}"></h1>
+    <!--Alert Message-->
+    <div
+      th:if="${alert}"
+      class="alert alert-dismissible fade show fixed-top"
+      th:classappend="${'alert-' + alert.color}"
+      style="z-index: 1050"
+    >
+      <span class="text text-sm" th:text="${alert.msg}"></span>
       <button
-        class="btn btn-sm btn-dark ms-3"
-        id="addBookmarkBtn"
-        data-bs-toggle="modal"
-        data-bs-target="#TagModal"
-      >
-        +
-      </button>
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
     </div>
-
-    <div th:replace="fragments/alert"></div>
-
-    <!-- Modal for Tag Create Form -->
-    <div th:replace="tag/form"></div>
-
-    <!-- Table -->
-    <div class="table-responsive">
-      <table class="table table-hover" id="tagTable">
-        <thead class="table-light">
-          <tr>
-            <th>タッグ名</th>
-            <th>詳細</th>
-            <th>処理</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="object : ${object_list}">
-            <td th:text="${object.name}">Search Engine</td>
-            <td th:text="${object.description}">
-              標準的に使われるサーチエンジンサイト
-            </td>
-            <td>
-              <button
-                class="btn btn-sm btn-danger ms-3"
-                hx-trigger="click"
-                th:hx-delete="'/tag/delete/' + ${object.id}"
-                hx-confirm="本当に削除しますか？"
-              >
-                削除
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <!--main fragment-->
+    <main layout:replace="~{${dynamicFragment} :: main}"></main>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

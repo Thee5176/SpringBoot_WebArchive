@@ -1,0 +1,59 @@
+<div layout:fragment="main">
+  <h1 th:text="${title}"></h1>
+  <!--Add Tag Button-->
+  <button
+    class="btn btn-sm btn-dark ms-3"
+    data-bs-toggle="modal"
+    data-bs-target="#NewTagModal"
+    hx-get="tag/form"
+    hx-trigger="click"
+    hx-target="#addNewTagModal"
+    hx-swap="innerHTML"
+  >
+    +
+  </button>
+  <!--New Tag Modal-->
+  <div
+    class="modal fade"
+    id="NewTagModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="NewTagModalLabel"
+    aria-modal="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div id="addNewTagModal" class="modal-content">
+        <!--form for HTMX insert modal-->
+      </div>
+    </div>
+  </div>
+  <!-- Table -->
+  <div class="table-responsive">
+    <table class="table table-hover" id="tagTable">
+      <thead class="table-light">
+        <tr>
+          <th>タッグ名</th>
+          <th>詳細</th>
+          <th>処理</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="object : ${object_list}">
+          <td th:text="${object.name}">Search Engine</td>
+          <td th:text="${object.description}">
+            標準的に使われるサーチエンジンサイト
+          </td>
+          <td>
+            <!--Tag Delete Button-->
+            <a
+              class="btn btn-sm btn-danger ms-3"
+              th:href="'/tag/delete/' + ${object.id}"
+            >
+              削除
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

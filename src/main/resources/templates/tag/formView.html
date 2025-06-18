@@ -1,0 +1,50 @@
+<form
+  th:object="${formData}"
+  id="tagForm"
+  method="POST"
+th:action="'/tag/' + ${dynamicPath}"
+  class="m-4 p-4"
+  layout:fragment="main"
+>
+  <div class="form-header d-flex">
+    <h3 class="modal-title m-auto" id="tagModalLabel">新しいタッグ</h3>
+    <a type="button" class="btn btn-sm btn-primary" href="/bookmark"
+      >ブックマーク一覧へ</a
+    >
+  </div>
+  <div class="form-body">
+    <div class="mb-3">
+      <label for="tagTitle" class="form-label">タッグ名</label>
+      <input
+        name="name"
+        type="text"
+        class="form-control"
+        id="tagTitle"
+        placeholder="タッグ名"
+        th:field="${formData.name}"
+        required
+      />
+      <div
+        class="text text-danger"
+        th:if="${#fields.hasErrors('name')}"
+        th:errors="*{name}"
+        th:errorclass="err"
+      ></div>
+    </div>
+    <div class="mb-3">
+      <label for="tagDescription" class="form-label">説明</label>
+      <input
+        name="description"
+        type="text"
+        class="form-control"
+        id="tagDescription"
+        placeholder="説明"
+        th:field="${formData.description}"
+        required
+      />
+    </div>
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-success" id="submitTag">確定</button>
+    </div>
+  </div>
+</form>

@@ -16,7 +16,7 @@ import jakarta.validation.ReportAsSingleViolation;
 @Retention(RetentionPolicy.RUNTIME)
 @ReportAsSingleViolation
 public @interface Website {
-	String message() default "リンク：URLパターンを確認してください！";
+	String message() default "リンク:URLパターンを確認してください";
 	
 	Class<?>[] groups() default {};
 	

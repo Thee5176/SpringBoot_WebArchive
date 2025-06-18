@@ -1,4 +1,4 @@
-package mapper;
+package com.thee5176.webarchive.mapper;
 
 import org.springframework.stereotype.Service;
 
