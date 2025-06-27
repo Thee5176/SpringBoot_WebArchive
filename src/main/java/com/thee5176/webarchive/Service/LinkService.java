@@ -32,10 +32,15 @@ public class LinkService {
 			// Set the tag for the link entity
 			Tag tag = tagRepository.findById(linkDto.tagId())
 					.orElseThrow(() -> new RuntimeException("Tag with id " + linkDto.tagId() + " not created yet"));
-			link.setCreatedAt(Instant.now());
 					
 			link.setTag(tag);
-			link.setUpdatedAt(Instant.now());
+
+			// Set created and updated time
+			Instant timestamp = Instant.now();
+
+			link.setCreatedAt(timestamp);
+			link.setUpdatedAt(timestamp);
+			
 			return linkRepository.saveAndFlush(link);
 
 		} else {
