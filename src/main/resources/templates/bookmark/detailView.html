@@ -1,0 +1,33 @@
+<div layout:fragment="main">
+	<div class="modal-header">
+		<h3 class="modal-title">ブックマーク詳細</h3>
+	</div>
+	<div class="modal-body">
+		<div class="mb-3">
+			<label for="websiteName" class="form-label">Website名</label>
+			<p th:text="${object.name}"></p>
+		</div>
+		<div class="mb-3">
+			<label for="websiteLink" class="form-label">リンク</label>
+			<p th:text="${object.url}"></p>
+		</div>
+		<div class="mb-3">
+			<label for="websiteTag" class="form-label">タッグ</label><br/>
+			<p>
+				<span class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="right" th:title="${object.tag}"><span th:text="${object.tag.name}"></span></i>
+			</p>
+		</div>
+		<div class="mb-3">
+			<label for="websiteDescription" class="form-label">説明</label>
+			<p th:text="${object.description}"></p>
+		</div>
+		<div class="mb-3">
+			<label for="websiteDescription" class="form-label">作成時</label>
+			<p th:text="${object.createdAt}"></p>
+		</div>
+		<div class="mb-3">
+			<label for="websiteDescription" class="form-label">更新時</label>
+			<p th:text="${object.updatedAt}"></p>
+		</div>
+	</div>
+</div>

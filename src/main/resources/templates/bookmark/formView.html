@@ -1,0 +1,99 @@
+<div layout:fragment="main">
+  <form
+    th:object="${formData}"
+    method="POST"
+    th:action="'/bookmark/' + ${dynamicPath}"
+    class="m-4 p-4"
+  >
+    <div class="form-header d-flex">
+      <h3
+        class="modal-title m-auto"
+        id="tagModalLabel"
+        th:text="${formTitle}"
+      ></h3>
+      <a type="button" class="btn btn-sm btn-primary" href="/tag"
+        >タッグ一覧へ</a
+      >
+    </div>
+    <div class="form-body">
+      <div class="mb-3">
+        <label for="websiteName" class="form-label">Website名</label>
+        <input
+          name="name"
+          type="text"
+          class="form-control"
+          id="websiteName"
+          placeholder="Website名"
+          th:field="${formData.name}"
+          required
+        />
+        <div
+          class="text text-danger"
+          th:if="${#fields.hasErrors('name')}"
+          th:errors="*{name}"
+          th:errorclass="err"
+        ></div>
+      </div>
+      <div class="mb-3">
+        <label for="websiteLink" class="form-label">リンク</label>
+        <input
+          name="url"
+          type="text"
+          class="form-control"
+          id="websiteLink"
+          placeholder="https://example.com"
+          th:field="${formData.url}"
+          required
+        />
+        <div
+          class="text text-danger"
+          th:if="${#fields.hasErrors('url')}"
+          th:errors="*{url}"
+          th:errorclass="err"
+          required
+        ></div>
+      </div>
+      <div class="mb-3">
+        <label for="websiteTag" class="form-label">タッグ</label>
+        <select name="tagId" class="form-select" id="websiteTag">
+          <option
+            th:each="object: ${object_list}"
+            th:value="${object.id}"
+            th:text="${object.name}"
+          >
+            Tag Name
+          </option>
+        </select>
+        <div
+          class="text text-danger"
+          th:if="${#fields.hasErrors('tagId')}"
+          th:errors="*{tagId}"
+          th:errorclass="err"
+        ></div>
+      </div>
+      <div class="mb-3">
+        <label for="websiteDescription" class="form-label">説明</label>
+        <input
+          name="description"
+          type="text"
+          class="form-control"
+          id="websiteDescription"
+          placeholder="説明"
+          th:field="${formData.description}"
+          required
+        />
+        <div
+          class="text text-danger"
+          th:if="${#fields.hasErrors('description')}"
+          th:errors="*{description}"
+          th:errorclass="err"
+        ></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success" id="submitBookmark">
+        確定
+      </button>
+    </div>
+  </form>
+</div>

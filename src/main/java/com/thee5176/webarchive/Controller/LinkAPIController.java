@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.thee5176.webarchive.Repository.LinkRepository;
 import com.thee5176.webarchive.Service.LinkService;
@@ -25,6 +25,7 @@ import com.thee5176.webarchive.model.Link;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
+@CrossOrigin(value={"http://localhost:5173"})
 public class LinkAPIController {
 	@Autowired 
 	LinkRepository linkRepository;
@@ -40,7 +41,7 @@ public class LinkAPIController {
 	
 	@GetMapping("/bookmark/api/name/{name}")
 	@Operation(summary = "Get bookmark with name", description = "Returns a product as per the name")
-	public Link getBookmarkByNameAPI(@PathVariable String name, ModelAndView mav) {
+	public Link getBookmarkByNameAPI(@PathVariable String name) {
 		return linkRepository.findByName(name)
 				.orElseThrow(() -> new RuntimeException("Bookmark with name " + name + " not found"));
 	}
@@ -48,11 +49,9 @@ public class LinkAPIController {
 
 	@GetMapping("/bookmark/api/id/{id}")
 	@Operation(summary = "Get bookmark with id", description = "Returns a product as per the id")
-	public ModelAndView getBookmarkByIdAPI(@PathVariable long id, ModelAndView mav) {
-		Link bookmark = linkRepository.findById(id)
+	public Link getBookmarkByIdAPI(@PathVariable long id) {
+		return linkRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Bookmark with id " + id + " not found"));
-		mav.addObject("object", bookmark);
-		return mav;
 	}
 	
 	@PutMapping("bookmark/api/update/{id}")
